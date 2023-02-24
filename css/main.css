@@ -1,0 +1,43 @@
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #081d51, #49248d);
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction:column;
+}
+
+#header{
+    color: white;
+}
+
+h1 {
+    margin margin-top: 15%;
+    font-size: 60px;
+}
+
+h2 {
+    display: flex;
+    justify-content: center;
+}
+
+.rectangle-shapes {
+    display:inline-flex;
+}
+
+.arc {
+    width: 800px;
+    height: 80px;
+    border-radius: 0 0 80px 80px;
+    border: 2px solid blue;
+}
+
+
+.rectangle-shapes > div {
+    margin-top: 70px;
+    margin-right: 150px;
+    border: 2px;  
+}
