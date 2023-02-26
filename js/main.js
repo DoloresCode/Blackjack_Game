@@ -19,8 +19,8 @@ let actionHit = true
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
-    deck = createDeck(); 
-    deck = shuffleDeck();
+    deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
+    deck = shuffleDeck(); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
 }
 
 function createDeck() {
@@ -36,15 +36,22 @@ function createDeck() {
         }
     }
      //console.log(deck)
-    return deck
+    return deck;
 }
 
-//We have the deck and now we need to shuffle a function.
+//We have the deck and now we need to shuffle a function + randomy selecting the cards.
 // Definition of the function suffleDeck (also add the variable at the top when the window load)
 function shuffleDeck() {
-    //for loop? Math.random?
-
+    for (let i = 0; i < deck.length; i++) { // Go through all the cards in the array/deck
+        let j = Math.floor(Math.random() * deck.lenght); // Genarate a random number between 0-51 and Math.random betweenn 0-1.Math.floor to remove the decimals
+        [shuffleDeck[i], shuffleDeck[j]] = [shuffleDeck[j], shuffleDeck[i]]; // to swap the values of the two variables
+    }
+    return shuffleDeck;
 }
+
+
+
+
 
 
 
