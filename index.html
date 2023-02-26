@@ -11,7 +11,9 @@
 <body>
     <div id="header">
          <h1>Blackjack</h1>
-         <h2>Hit Or Stand?</h2>
+    <div id="messages-box">
+            <h2 id="welcome-message">Welcome to the game!</h2>
+    </div>
     </div>
     <h3 >Dealer: <span id="dealer-cardsum"></span></h2>
     <div class="dealer-cards">
@@ -24,10 +26,14 @@
         <p id="results"></p>
     </div>
     <h3>You: <span id="your-cardsum"></span></h2>
+    <div id="scores-box">
+        <P id="scores-dealer">Dealer Score: 2</P>
+        <P id="your-scores">Player Score: 6</P>
+    </div>
     <div class="your-cards">
         <img src="./cards/4-S.png" alt="playing card" />
         <img src="./cards/Q-D.png" alt="playing card" />
     </div>
-    <button onclick="startGame()">START GAME</button>
+    <button class="start-btn" onclick="startGame()">START GAME</button>
 </body>
 </html>

@@ -3,6 +3,10 @@
 let dealerSum = 0;
 let yourSum = 0;
 
+// Scores
+let dealerScore = 0;
+let yourScore = 0;
+
   /*----- state variables -----*/
 // Keeping track of the number of Ace to see if stay < 21
 let dealerAceCount = 0;
@@ -16,6 +20,16 @@ let deck;
 let actionHit = true
 
   /*----- cached elements  -----*/
+// ** START THE GAME **
+//Button: START GAME - when we click
+
+let startBtn = document.querySelector('.start-btn');
+let welcomeMessage = document.getElementById('welcome-message');
+
+startBtn.addEventListener('click', function() {
+  welcomeMessage.textContent = "Let's get started!";
+});
+
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
@@ -48,6 +62,50 @@ function shuffleDeck() {
     }
     return shuffleDeck;
 }
+
+
+
+//
+
+
+
+// What to do With Ace's Counts? When sum>21 or not - posibility to reduce the value of Ace
+// Hint: Ace's values = 10 or 1 points
+
+
+
+
+
+
+// Function to HIT
+
+
+// Function to STAND
+
+
+// Winning Conditions
+// Declare 2 variables for a first and second card with random value between 2-11 and do their sum.
+let firstCard = 3
+let secondCard = 6
+let sum = firstCard + secondCard
+let message = ""; //Declaration of a variable for the message with a value as an empty string
+let hasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
+let isActive = true;   
+
+if (sum <  21) {
+	  message = "Do you want to hit a card or stand?";
+} else if (sum === 21) {
+	  message = "Yeah, you have got a Blackjack";
+	  hasBlackJack = true;
+} else {
+    message = "You bust, sorry! You can still play again";
+	  let isActive = false;      
+}
+
+//State of the Game – the console logs to check if it is working
+//console.log(hasBlackJack)
+//console.log(isActive)
+console.log(message)
 
 
 

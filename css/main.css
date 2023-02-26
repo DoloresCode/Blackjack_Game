@@ -38,9 +38,10 @@ h1 {
     margin-bottom: 20px;
 }
 
-h2 {
+#welcome-message {
     display: flex;
     justify-content: center;
+    margin-bottom: 5px;
 }
 
 h3 {
@@ -76,4 +77,40 @@ h3 {
     width: 65px;
     border-radius: 50%;
     font-size: 20px;
+}
+
+#scores-dealer {
+    position: absolute;
+    bottom: 0;
+    left: 5%;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 5%;
+    background-color: rgb(233, 199, 8);
+}
+
+#your-scores {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 5%;
+    background-color: rgb(233, 199, 8);
+}
+
+.start-btn {
+    position: absolute;
+    left: 5%;
+    bottom: 2;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 5%;
+    background-color:rgb(255, 0, 60);
+    color: white;
+    font-size: large;
+    font-weight: bold;
 }
