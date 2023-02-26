@@ -27,6 +27,8 @@ a.	Both players should not exceed 21 points, if they do so, they bust and loses 
 b.	If the player’s hand is higher than the dealer’s without busting (so less than 22), the player wins (and can receive a payout equal to their original bet)
 c.	If the dealer’s hand is higher than the player’s without busting, the player loses their bet.
 d.	If the hands are tied, it is a “push”. The player receives their bet back.
+e. If the players hand is egal to 21, they have a Blackjack!
+
 
 
 ## Technologies Used
