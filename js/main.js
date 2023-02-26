@@ -1,7 +1,7 @@
 /*----- constants -----*/
 // Players' sums at the start of the game
-const dealerSum = 0;
-const yorSum = 0;
+let dealerSum = 0;
+let yourSum = 0;
 
   /*----- state variables -----*/
 // Keeping track of the number of Ace to see if stay < 21
@@ -19,8 +19,8 @@ let actionHit = true
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
-    createDeck();
-    suffleDeck
+    deck = createDeck(); 
+    deck = shuffleDeck();
 }
 
 function createDeck() {
@@ -35,7 +35,8 @@ function createDeck() {
             deck.push(values[j] + "-" + types[i]); 
         }
     }
-     console.log(deck)   
+     //console.log(deck)
+    return deck
 }
 
 //We have the deck and now we need to shuffle a function.
