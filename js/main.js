@@ -1,5 +1,7 @@
 /*----- constants -----*/
-// Players' sums at the start of the game
+let dealerHand = [];
+let yourHand = [];
+// Players cards' sums at the start of the game
 let dealerSum = 0;
 let yourSum = 0;
 
@@ -20,50 +22,140 @@ let deck;
 let actionHit = true
 
   /*----- cached elements  -----*/
-// ** START THE GAME **
-//Button: START GAME - when we click
+// ** START THE GAME ** //
+
+//Buttons & Actions
 
 let startBtn = document.querySelector('.start-btn');
-let welcomeMessage = document.getElementById('welcome-message');
+let welcomeMessage = document.getElementById('global-message');
 
 startBtn.addEventListener('click', function() {
   welcomeMessage.textContent = "Let's get started!";
+  startGame(); //call the start button when it's clicked
 });
+
+
+let hitButton = document.querySelector('input[value="Hit"]');
+let standButton = document.querySelector('input[value="Stand"]');
 
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
     deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
     deck = shuffleDeck(); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
-}
+    startGame();
+  }
 
 function createDeck() {
-    let types = ['S','H','D','C'];
+    let suits = ['S','H','D','C'];
     let values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
     deck = []; //initiate with empthy array before creating a for loop to go through the 2 arrays
 
-//For loop to go through the 2 arrays (all "types" first and after "values") 
+//For loop to go through the 2 arrays (all "suits" first and after "values") 
 //so A-S, 2-S, 3-S...K-S and after A-H until K-H, etc.
-    for (let i = 0; i < types.length; i++) {
+    for (let i = 0; i < suits.length; i++) {
         for (let j = 0; j < values.length; j++) {
-            deck.push(values[j] + "-" + types[i]); 
+            deck.push(values[j] + "-" + suits[i]); 
         }
     }
      //console.log(deck)
     return deck;
 }
 
-//We have the deck and now we need to shuffle a function + randomy selecting the cards.
+//We have the deck and now we need to shuffle a function + randomly select the cards.
 // Definition of the function suffleDeck (also add the variable at the top when the window load)
 function shuffleDeck() {
     for (let i = 0; i < deck.length; i++) { // Go through all the cards in the array/deck
-        let j = Math.floor(Math.random() * deck.lenght); // Genarate a random number between 0-51 and Math.random betweenn 0-1.Math.floor to remove the decimals
-        [shuffleDeck[i], shuffleDeck[j]] = [shuffleDeck[j], shuffleDeck[i]]; // to swap the values of the two variables
+        let j = Math.floor(Math.random() * deck.length); // Generate a random number between 0-51 and Math.random between 0-1.Math.floor to remove the decimals
+        [deck[i], deck[j]] = [deck[j], deck[i]]; // to swap 2 cards with 2 other cards by creating an array of 2 elements
     }
-    return shuffleDeck;
+    return deck; // return the shuffled deck
+}
+
+// ** RENDER THE GAME ** //
+
+function startGame() {
+  hiddenCard = deck.pop();
+  dealerSum += getValue(hiddenCard);
+  dealerAceCount += checkAce(hiddenCard);
+  console.log(hiddenCard);
+  console.log(dealerSum);
+}
+
+//Card's Value
+
+function checkValue(card) {
+    let info = card.split("-"); //give composition of the card as an array e.g ["10","D"]
+    let value = info[0];
+    if (isNaN(value)) {
+        if (value === "A") {
+            return 11;
+        } else {
+        return 10;
+    }
+    return isaNum(value);
+  }
+}
+
+function checkAce(card) {     //number of Ace
+    if (card[0] === "A") {
+        return 1;
+    }
+        return 0;          
 }
 
 
+
+
+///????? work on that
+// Dealer deals 2 cards to each from a shuffle deck
+// the function "dealCards()" call "shuffleDeck()" to make sure it's shuffle before giving the cards
+function dealCards() {
+  shuffleDeck();
+  dealerHand.push(deck.pop());
+  dealerHand.push(deck.pop());
+
+  yourHand.push(deck.pop());
+  yourHand.push(deck.pop());
+}
+ 
+
+
+
+
+
+
+
+
+
+
+// ** Winning Conditions **
+// Declare 2 variables for a first and second card with random value between 2-11 and do their sum.
+let firstCard = 3
+let secondCard = 6
+let sum = firstCard + secondCard
+let message = ""; //Declaration of a variable for the message with a value as an empty string
+let hasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
+let isActive = true; 
+
+let dealerCardSum = document.querySelector("#dealerCardSum") // See the sum of the Dealer's cards 1/2
+
+if (sum <  21) {
+  dealerCardSum.textContent = sum; // See the sum of the Dealer's cards 2/2
+  
+	  message = "Do you want to hit a card or stand?";
+} else if (sum === 21) {
+	  message = "Yeah, you have got a Blackjack";
+	  hasBlackJack = true;
+} else {
+    message = "You bust, sorry! You can still play again";
+	  let isActive = false;      
+}
+
+//State of the Game – the console logs to check if it is working
+//console.log(hasBlackJack)
+//console.log(isActive)
+//console.log(message)
 
 //
 
@@ -81,36 +173,6 @@ function shuffleDeck() {
 
 
 // Function to STAND
-
-
-// Winning Conditions
-// Declare 2 variables for a first and second card with random value between 2-11 and do their sum.
-let firstCard = 3
-let secondCard = 6
-let sum = firstCard + secondCard
-let message = ""; //Declaration of a variable for the message with a value as an empty string
-let hasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
-let isActive = true;   
-
-if (sum <  21) {
-	  message = "Do you want to hit a card or stand?";
-} else if (sum === 21) {
-	  message = "Yeah, you have got a Blackjack";
-	  hasBlackJack = true;
-} else {
-    message = "You bust, sorry! You can still play again";
-	  let isActive = false;      
-}
-
-//State of the Game – the console logs to check if it is working
-//console.log(hasBlackJack)
-//console.log(isActive)
-console.log(message)
-
-
-
-
-
 
 
 
