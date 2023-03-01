@@ -15,8 +15,8 @@
             <h2 id="global-message">Welcome to the game!</h2>
     </div>
     </div>
-    <h3 >Dealer: <span id="dealerCardSum"></span></h2>
-    <div class="dealer-cards">
+    <h3>Dealer: <span id="dealerCardSum"></span></h3>
+    <div id="dealer-cards">
             <img id="hiddenCard" src="./cards/BACK.png" alt="back of a playing card" />
         </div>
     <div class="button">
@@ -24,14 +24,16 @@
         <input type="button" value="Stand">
         <p id="results"></p>
     </div>
-    <h3>You: <span id="yourCardSum"></span></h2>
+    <h3>You: <span id="yourCardSum"></span></h3>
     <div id="scores-box">
-        <P id="scores-dealer">Dealer Score: 2</P>
+        <P id="dealer-scores">Dealer Score: 2</P>
         <P id="your-scores">Player Score: 6</P>
     </div>
-    <div class="your-cards">
+    <div id="your-cards">
         <img src="./cards/4-S.png" alt="playing card" />
         <img src="./cards/Q-D.png" alt="playing card" />
+        <img src="./cards/Q-S.png" alt="playing card" />
+        <img src="./cards/A-H.png" alt="playing card" />
     </div>
     <button class="start-btn" onclick="startGame()">START GAME</button>
 </body>

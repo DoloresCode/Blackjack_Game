@@ -20,8 +20,10 @@ body {
     height: 100vh;
     width: 100%;
     position: relative;
+    z-index: 0;
 
 }
+
 
 #header{
     color: white;
@@ -49,7 +51,7 @@ h3 {
     border-radius: 20%;
 }
 
-.dealer-cards img {
+#dealer-cards img {
     height: 170px;
     width: 120px;
     margin: 2px;
@@ -57,7 +59,7 @@ h3 {
     margin-bottom: 40px;
 }
 
-.your-cards img {
+#your-cards img {
     height: 170px;
     width: 120px;
     margin: 2px;
@@ -79,7 +81,7 @@ h3 {
     font-size: 20px;
 }
 
-#scores-dealer {
+#dealer-scores {
     position: absolute;
     bottom: 0;
     left: 5%;
