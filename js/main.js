@@ -1,14 +1,10 @@
 /*----- constants -----*/
-
 // Players cards' sums at the start of the game
 let dealerCardSum = 0;
 let yourCardSum = 0;
-
 // Scores
 let dealerScore = 0;
 let yourScore = 0;
-
-  /*----- state variables -----*/
 // Keeping track of the number of Ace to see if stay < 21
 let dealerAceCount = 0;
 let yourAcecount = 0; 
@@ -25,19 +21,22 @@ let actionHit = true
 
 //Buttons & Actions
 
-let startBtn = document.querySelector('.start-btn');
-let welcomeMessage = document.getElementById('global-message');
-
-startBtn.addEventListener('click', function() {
-  welcomeMessage.textContent = "Let's get started! " + message;
-});
-
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
+  let startBtn = document.querySelector('.start-btn');
+  let welcomeMessage = document.getElementById('global-message');
+  let dealerHand = [];
+  let yourHand = [];
+
   deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
-  deck = shuffleDeck(); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
+  deck = shuffleDeck(deck); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
   startGame();
+
+  startBtn.addEventListener('click', function() {
+    welcomeMessage.textContent = "Let's get started! " + message;
+    dealerHand, yourHand = dealHands(deck)
+  });
 }
 
 function createDeck() {
@@ -56,31 +55,57 @@ function createDeck() {
   return deck;
 }
 
+
 //We have the deck and now we need to shuffle a function + randomly select the cards.
 // Definition of the function suffleDeck (also add the variable at the top when the window load)
-function shuffleDeck() {
-  for (let i = 0; i < deck.length; i++) { // Go through all the cards in the array/deck
+function shuffleDeck(deck) {
+  shuffledDeck = [];
+  for (let i = 1; i > shuffledDeck.length && i < 53; i++) { // Go through all the cards in the array/deck
       let j = Math.floor(Math.random() * deck.length); // Generate a random number between 0-51 and Math.random between 0-1.Math.floor to remove the decimals
-      [deck[i], deck[j]] = [deck[j], deck[i]]; // to swap 2 cards with 2 other cards by creating an array of 2 elements
+      shuffledDeck.push(deck[j]);
+      deck.splice(j,1);
+    //[deck[i], deck[j]] = [deck[j], deck[i]]; // to swap 2 cards with 2 other cards by creating an array of 2 elements
   }
-  return deck; // return the shuffled deck
+  
+  return shuffledDeck; // return the shuffled deck
 }
 
 // ** CARDS DISTRIBUTION ** //
 
-function dealHands() {
-  let dealerHand = [];
-  let yourHand = [];
 
+function dealHands(deck) {
+  let yourHand = [];
+  let dealerHand = [];
   //deal Two cards to the You (player) - loop iterate twice
   for (let i = 0; i < 2; i++) {  
     let yourCard = deck.pop(); // remove last card of the deck
+    let dealerCard = deck.pop();
     yourHand.push(yourCard);
-    let yourCardDiv = document.createElement('div');
-  }                             
+    dealerHand.push(dealerCard);
+    let yourCardImg = document.createElement('img'); //create a new div element
+    let dealerCardImg = document.createElement('img'); //create a new div element
+    yourCardImg.src = "./cards/" + yourCard + ".png";
+    
+    let yourCards = document.getElementById("your-cards");
+    let dealerCards = document.getElementById("dealer-cards");
+    yourCards.append(yourCardImg);
+    if (i === 0){
+      dealerCardImg.src = "./cards/BACK.png";
+    } else {
+      dealerCardImg.src = "./cards/" + dealerCard + ".png";
+    }
+    dealerCards.append(dealerCardImg)
+  } 
+  return dealerHand, yourHand                            
 }
 
-
+function checkCardSum(hand) {
+ let sum = 0;
+ for (let i =0; i < hand.length; i++) {
+      sum += hand[i];
+ }
+ return sum;
+}
 
 
 // Declare 2 variables for a first and second card with random value between 2-11 and do their sum.
@@ -120,9 +145,18 @@ let standButton = document.querySelector('input[value="Stand"]');
 
 // ** RENDER THE GAME ** //
 
+function getValue(val) {
+  let res = "";
+
+}
+
 function startGame() {
   hiddenCard = deck.pop();
   dealerCardSum += getValue(hiddenCard);
+
+  // for ex: hiddenCard = "S-4"
+
+  // there is no getValue 
   dealerAceCount += checkAce(hiddenCard);
   console.log(hiddenCard);
   console.log(dealerCardSum );
