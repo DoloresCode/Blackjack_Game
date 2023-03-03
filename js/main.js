@@ -16,26 +16,44 @@ let deck;
 // Allows you to hit when yourSum < 21
 let actionHit = true
 
-  /*----- cached elements  -----*/
+let yourHand = document.querySelector("#your-cards");
+
 // ** START THE GAME ** //
 
 //Buttons & Actions
-
 // to start we need some card to distribute => create the deck
 // Call a function when the window onload 
 window.onload = function() {
+  let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
+  let yourCardScoreDiv = document.querySelector("#yourCardSum");
   let startBtn = document.querySelector('.start-btn');
   let welcomeMessage = document.getElementById('global-message');
   let dealerHand = [];
   let yourHand = [];
+  let dealerHandValues;
+  let yourHandValues;
 
   deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
   deck = shuffleDeck(deck); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
-  startGame();
 
-  startBtn.addEventListener('click', function() {
-    welcomeMessage.textContent = "Let's get started! " + message;
-    dealerHand, yourHand = dealHands(deck)
+  startBtn.addEventListener('click', () => {
+    welcomeMessage.textContent = "Let's get started!";
+    dealerHand, yourHand = dealHands(deck);
+    dealerHandValues, yourHandValues = convertCardsToValues(dealerHand, yourHand);
+    dealerCardSum, yourCardSum = evaluateInitialHands(dealerHandValues, yourHandValues);
+    yourCardScoreDiv.textContent = yourCardSum;
+    dealerCardScoreDiv.textContent = dealerCardSum;
+    // Check for Blackjack
+    // Your turn
+        // Hit 
+          // evaluate the score (Blackjack or bust?)
+        // or Stand
+    // Dealer Turn
+        // Check the score, then choose Hit / Stand (based on score
+          // If Hit, 
+            // evaluate the score (Blackjack or bust?)
+    // If the Dealer stands
+      // Final evaluation, if no one has busted
   });
 }
 
@@ -60,18 +78,15 @@ function createDeck() {
 // Definition of the function suffleDeck (also add the variable at the top when the window load)
 function shuffleDeck(deck) {
   shuffledDeck = [];
-  for (let i = 1; i > shuffledDeck.length && i < 53; i++) { // Go through all the cards in the array/deck
+  for (let i = 1; i > shuffledDeck.length && i < 53; i++) { // for loop to go through all the sheffledDeck. We iterate from 1 and as long as i >53 to put all the card in the stored shuffeled deck
       let j = Math.floor(Math.random() * deck.length); // Generate a random number between 0-51 and Math.random between 0-1.Math.floor to remove the decimals
       shuffledDeck.push(deck[j]);
       deck.splice(j,1);
-    //[deck[i], deck[j]] = [deck[j], deck[i]]; // to swap 2 cards with 2 other cards by creating an array of 2 elements
   }
-  
   return shuffledDeck; // return the shuffled deck
 }
 
-// ** CARDS DISTRIBUTION ** //
-
+// ** DEALER DEALS THE CARDS ** //
 
 function dealHands(deck) {
   let yourHand = [];
@@ -96,42 +111,70 @@ function dealHands(deck) {
     }
     dealerCards.append(dealerCardImg)
   } 
-  return dealerHand, yourHand                            
+  return (dealerHand, yourHand);                        
 }
 
-function checkCardSum(hand) {
- let sum = 0;
- for (let i =0; i < hand.length; i++) {
-      sum += hand[i];
- }
- return sum;
+// ** CALCULATE THE SUM OF THE HANDS & UPDATE THEM ** //
+
+function convertCardsToValues(dealerHand, yourHand) {
+  let dealerHandValues = [];
+  let yourHandValues = [];  
+  dealerCardSum = 0;
+  dealerAceCount = 0;
+  for (let i = 0; i < dealerHand.length; i++) {
+    dealerHandValues.push(checkValue(dealerHand[i]));
+  }
+  yourHand.forEach((card) => { // equivalent to above loop; just another syntax
+    yourHandValues.push(checkValue(card))
+  })
+  return (dealerHandValues, yourHandValues);
+}
+
+function evaluateInitialHands(dealerHandValues, yourHandValues){
+  let yourSum = 0;
+  let dealerSum = 0;
+  yourSum = yourHandValues.reduce((accumulator, value) => accumulator + value);
+  dealerCardSum = yourHandValues.reduce((accumulator, value) => accumulator + value);
+  if(yourSum === 22){
+    yourSum =  12;
+  }
+  if(dealerSum === 22){
+    dealerSum = 12;
+  }
+  return (dealerSum, yourSum);
+}
+
+//Card's Valuey
+
+function checkValue(card) {
+  let info = card.split("-"); //give composition of the card as an array e.g ["10","D"]
+  let value = info[0];
+  if (isNaN(value)) {
+      if (value === "A") {
+        return 11;
+    } else {
+      return 10;
+    } 
+  }
+  return parseInt(value);
 }
 
 
-// Declare 2 variables for a first and second card with random value between 2-11 and do their sum.
-let firstCard = 3
-let secondCard = 3
-let sum = firstCard + secondCard
-let message = ""; //Declaration of a variable for the message with a value as an empty string
+// ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM , GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
+
 let hasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
 let isActive = true; // Player(you) is still active in the game
 
-   dealerCardSum = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
-   yourCardSum = document.querySelector("#yourCardSum");
-   yourHand = document.querySelector("#your-cards");
 
-
-if (sum <  21) {
-  dealerCardSum.textContent = sum; // See the sum of the Dealer's cards 2/2
-  yourCardSum.textContent = sum;
-	  message = "Do you want to hit a card or stand?"; // welcomeMessage.textContent = "Do you want to hit a card or stand?";
-} else if (sum === 21) {
-	  message = "Yeah, you have got a Blackjack"; // welcomeMessage.textContent = "Yeah, you have got a Blackjack";
-	  hasBlackJack = true;
-} else {
-    message = "You bust, sorry! You can still play again"; // welcomeMessage.textContent = "You bust, sorry! You can still play again";
-	  let isActive = false;      
-}
+//if (sum <  21) {
+  //welcomeMessage.textContent = "Do you want to hit a card or stand?"; // welcomeMessage.textContent = "Do you want to hit a card or stand?";
+//} else if (sum === 21) {
+ // welcomeMessage.textContent = "Yeah, you have got a Blackjack"; // welcomeMessage.textContent = "Yeah, you have got a Blackjack";
+	//  hasBlackJack = true;
+//} else {
+ // welcomeMessage.textContent = "You bust, sorry! You can still play again"; // welcomeMessage.textContent = "You bust, sorry! You can still play again";
+	  //let isActive = false;      
+//}
 
 // check the scores and update them
 //  dealerScore = document.querySelector("#dealer-scores")
@@ -141,106 +184,3 @@ if (sum <  21) {
 
 let hitButton = document.querySelector('input[value="Hit"]');
 let standButton = document.querySelector('input[value="Stand"]');
-
-
-// ** RENDER THE GAME ** //
-
-function getValue(val) {
-  let res = "";
-
-}
-
-function startGame() {
-  hiddenCard = deck.pop();
-  dealerCardSum += getValue(hiddenCard);
-
-  // for ex: hiddenCard = "S-4"
-
-  // there is no getValue 
-  dealerAceCount += checkAce(hiddenCard);
-  console.log(hiddenCard);
-  console.log(dealerCardSum );
-}
-
-//Card's Value
-
-function checkValue(card) {
-    let info = card.split("-"); //give composition of the card as an array e.g ["10","D"]
-    let value = info[0];
-    if (isNaN(value)) {
-        if (value === "A") {
-            return 11;
-        } else {
-        return 10;
-    }
-    return isaNum(value);
-  }
-}
-
-function checkAce(card) {     //number of Ace
-    if (card[0] === "A") {
-        return 1;
-    }
-        return 0;          
-}
-
-
-
-
-///????? work on that
-// Dealer deals 2 cards to each from a shuffle deck
-// the function "dealCards()" call "shuffleDeck()" to make sure it's shuffle before giving the cards
-function dealCards() {
-  shuffleDeck();
-  dealerHand.push(deck.pop());
-  dealerHand.push(deck.pop());
-
-  yourHand.push(deck.pop());
-  yourHand.push(deck.pop());
-}
- 
-
-
-
-
-
-
-
-
-
-
-// ** Winning Conditions **
-
-
-//State of the Game – the console logs to check if it is working
-//console.log(hasBlackJack)
-//console.log(isActive)
-//console.log(message)
-
-
-
-
-
-// What to do With Ace's Counts? When sum>21 or not - posibility to reduce the value of Ace
-// Hint: Ace's values = 10 or 1 points
-
-
-
-
-
-
-// Function to HIT
-
-
-// Function to STAND
-
-
-
-
-
-
-  /*----- event listeners -----*/
-
-
-  /*----- functions -----*/
-
