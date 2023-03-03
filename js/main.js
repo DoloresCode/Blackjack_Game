@@ -38,9 +38,9 @@ window.onload = function() {
 
   startBtn.addEventListener('click', () => {
     welcomeMessage.textContent = "Let's get started!";
-    dealerHand, yourHand = dealHands(deck);
-    dealerHandValues, yourHandValues = convertCardsToValues(dealerHand, yourHand);
-    dealerCardSum, yourCardSum = evaluateInitialHands(dealerHandValues, yourHandValues);
+    [dealerHand, yourHand] = dealHands(deck);
+    [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
+    [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
     yourCardScoreDiv.textContent = yourCardSum;
     dealerCardScoreDiv.textContent = dealerCardSum;
     // Check for Blackjack
@@ -53,7 +53,7 @@ window.onload = function() {
           // If Hit, 
             // evaluate the score (Blackjack or bust?)
     // If the Dealer stands
-      // Final evaluation, if no one has busted
+      // Final evaluation (compare scores)
   });
 }
 
@@ -109,9 +109,9 @@ function dealHands(deck) {
     } else {
       dealerCardImg.src = "./cards/" + dealerCard + ".png";
     }
-    dealerCards.append(dealerCardImg)
-  } 
-  return (dealerHand, yourHand);                        
+    dealerCards.append(dealerCardImg);
+  };
+  return [dealerHand, yourHand];
 }
 
 // ** CALCULATE THE SUM OF THE HANDS & UPDATE THEM ** //
@@ -121,30 +121,34 @@ function convertCardsToValues(dealerHand, yourHand) {
   let yourHandValues = [];  
   dealerCardSum = 0;
   dealerAceCount = 0;
-  for (let i = 0; i < dealerHand.length; i++) {
-    dealerHandValues.push(checkValue(dealerHand[i]));
-  }
+  //for (let i = 0; i < dealerHand.length; i++) {
+  //  dealerHandValues.push(checkValue(dealerHand[i]));
+  //}
+  dealerHand.forEach((card) => { // equivalent to above loop; just another syntax
+    dealerHandValues.push(checkValue(card));
+  });
+  console.log(dealerHandValues);
   yourHand.forEach((card) => { // equivalent to above loop; just another syntax
     yourHandValues.push(checkValue(card))
-  })
-  return (dealerHandValues, yourHandValues);
+  });
+  return [dealerHandValues, yourHandValues];
 }
 
 function evaluateInitialHands(dealerHandValues, yourHandValues){
   let yourSum = 0;
   let dealerSum = 0;
   yourSum = yourHandValues.reduce((accumulator, value) => accumulator + value);
-  dealerCardSum = yourHandValues.reduce((accumulator, value) => accumulator + value);
+  dealerSum = dealerHandValues.reduce((accumulator, value) => accumulator + value);
   if(yourSum === 22){
     yourSum =  12;
   }
   if(dealerSum === 22){
     dealerSum = 12;
   }
-  return (dealerSum, yourSum);
+  return [dealerSum, yourSum];
 }
 
-//Card's Valuey
+//Card's Value
 
 function checkValue(card) {
   let info = card.split("-"); //give composition of the card as an array e.g ["10","D"]
