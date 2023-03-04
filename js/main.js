@@ -2,7 +2,7 @@
 // Players cards' sums at the start of the game
 let dealerCardSum = 0;
 let yourCardSum = 0;
-// Scores
+// Wins
 let dealerWins = 0;
 let yourWins = 0;
 // Keeping track of the number of Ace to see if stay < 21
@@ -24,8 +24,13 @@ const welcomeMessage = document.getElementById('global-message');
 
 //Buttons & Actions
 // to start we need some card to distribute => create the deck
-// Call a function when the window onload 
-window.onload = function() {
+// Call a function when the window onload
+
+window.onload = function startGame() {
+  //let yourCards = document.getElementById("your-cards");
+  //let dealerCards = document.getElementById("dealer-cards");
+  //yourCards.innerHTML = "";
+  //dealerCards.innerHTML = "";
   let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
   let yourCardScoreDiv = document.querySelector("#yourCardSum");
   let startBtn = document.querySelector('.start-btn');
@@ -37,13 +42,19 @@ window.onload = function() {
   deck = shuffleDeck(deck); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
 
   startBtn.addEventListener('click', () => {
+    let yourCards = document.getElementById("your-cards");
+    let dealerCards = document.getElementById("dealer-cards");
+    yourCards.innerHTML = "";
+    dealerCards.innerHTML = "";
     welcomeMessage.textContent = "Let's get started!";
     [dealerHand, yourHand] = dealHands(deck);
     [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
     [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
     yourCardScoreDiv.textContent = yourCardSum;
-    dealerCardScoreDiv.textContent = dealerCardSum;
-   
+    //dealerCardScoreDiv.textContent = dealerCardSum;
+    gameStatus()
+
+    
     // Check for Blackjack
     // Your turn
         // Hit 
@@ -57,6 +68,7 @@ window.onload = function() {
       // Final evaluation (compare scores)
   });
 }
+
 
 function createDeck() {
   let suits = ['S','H','D','C'];
@@ -172,6 +184,7 @@ let dealerhasBlackJack = false; // variable to track the state of the game for t
 let youisActive = true;   // Player(you) is still active in the game
 let dealerisActive = true;
 
+function gameStatus() {
 if (yourCardSum === 21) {
   welcomeMessage.textContent = "Blackjack,! You win!";
   youhasBlackJack = true;
@@ -179,6 +192,7 @@ if (yourCardSum === 21) {
   youisActive = true;
   dealerisActive = false;
   youWins += 1;
+  
 } else if (dealerCardSum === 21) {
   welcomeMessage.textContent = "Dealer has Blackjack,! You lose!";
   youhasBlackJack = false;
@@ -194,11 +208,13 @@ if (yourCardSum === 21) {
   dealerisActive = true;
 }
 
-yourWins = docucument.getElementById("your-wins");   
-dealerWins = docucument.getElementById("dealer-wins");
+let yourWinsDisplay = document.getElementById("your-wins");   
+let dealerWinsDisplay = document.getElementById("dealer-wins");
 
-yourWins.textContent = "Player Wins: " + yourWins;
-dealerWins.textContent = "Dealer Wins: " + dealerWins;
+yourWinsDisplay.textContent = "Player Wins: " + yourWins;
+dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
+
+}
 
 
 
