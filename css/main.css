@@ -82,7 +82,7 @@ h3 {
     font-size: 20px;
 }
 
-#dealer-scores {
+#dealer-wins {
     position: absolute;
     bottom: 0;
     left: 5%;
@@ -93,7 +93,7 @@ h3 {
     background-color: rgb(233, 199, 8);
 }
 
-#your-scores {
+#your-wins {
     position: absolute;
     bottom: 0;
     left: 20%;

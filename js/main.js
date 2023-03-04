@@ -3,8 +3,8 @@
 let dealerCardSum = 0;
 let yourCardSum = 0;
 // Scores
-let dealerScore = 0;
-let yourScore = 0;
+let dealerWins = 0;
+let yourWins = 0;
 // Keeping track of the number of Ace to see if stay < 21
 let dealerAceCount = 0;
 let yourAcecount = 0; 
@@ -19,6 +19,8 @@ let actionHit = true
 let yourHand = document.querySelector("#your-cards");
 
 // ** START THE GAME ** //
+
+const welcomeMessage = document.getElementById('global-message');
 
 //Buttons & Actions
 // to start we need some card to distribute => create the deck
@@ -174,23 +176,30 @@ if (yourCardSum === 21) {
   welcomeMessage.textContent = "Blackjack,! You win!";
   youhasBlackJack = true;
   dealerhasBlackJack = false;
-  let youisActive = true;
-  let dealerisActive = false;
-  yourScore += 1;
+  youisActive = true;
+  dealerisActive = false;
+  youWins += 1;
 } else if (dealerCardSum === 21) {
   welcomeMessage.textContent = "Dealer has Blackjack,! You lose!";
   youhasBlackJack = false;
   dealerhasBlackJack = true;
-  let youisActive = false;
-  let dealerisActive = true;
-  dealerScore += 1;
-} else if (sum <  21) {
+  youisActive = false;
+  dealerisActive = true;
+  dealerWins += 1;
+} else if (yourCardSum <  21) {
   welcomeMessage.textContent = "Do you want to hit a card or stand?";
   youhasBlackJack = false;
   dealerhasBlackJack = false;
-  let youisActive = true;
-  let dealerisActive = true;
+  youisActive = true;
+  dealerisActive = true;
 }
+
+yourWins = docucument.getElementById("your-wins");   
+dealerWins = docucument.getElementById("dealer-wins");
+
+yourWins.textContent = "Player Wins: " + yourWins;
+dealerWins.textContent = "Dealer Wins: " + dealerWins;
+
 
 
 
