@@ -30,8 +30,6 @@ window.onload = function() {
   let welcomeMessage = document.getElementById('global-message');
   let dealerHand = [];
   let yourHand = [];
-  let dealerHandValues;
-  let yourHandValues;
 
   deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
   deck = shuffleDeck(deck); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
@@ -43,6 +41,7 @@ window.onload = function() {
     [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
     yourCardScoreDiv.textContent = yourCardSum;
     dealerCardScoreDiv.textContent = dealerCardSum;
+   
     // Check for Blackjack
     // Your turn
         // Hit 
@@ -93,17 +92,17 @@ function dealHands(deck) {
   let dealerHand = [];
   //deal Two cards to the You (player) - loop iterate twice
   for (let i = 0; i < 2; i++) {  
-    let yourCard = deck.pop(); // remove last card of the deck
+    let yourCard = deck.pop(); // remove last card of the deck array to store them in the variable yourCard
     let dealerCard = deck.pop();
-    yourHand.push(yourCard);
+    yourHand.push(yourCard); // add the card to the hand
     dealerHand.push(dealerCard);
-    let yourCardImg = document.createElement('img'); //create a new div element
-    let dealerCardImg = document.createElement('img'); //create a new div element
-    yourCardImg.src = "./cards/" + yourCard + ".png";
+    let yourCardImg = document.createElement('img'); //create a new div element in HTML file
+    let dealerCardImg = document.createElement('img'); 
+    yourCardImg.src = "./cards/" + yourCard + ".png"; //set the source of the card image
     
     let yourCards = document.getElementById("your-cards");
     let dealerCards = document.getElementById("dealer-cards");
-    yourCards.append(yourCardImg);
+    yourCards.append(yourCardImg); // append yourCardImg to yourCards element
     if (i === 0){
       dealerCardImg.src = "./cards/BACK.png";
     } else {
@@ -137,10 +136,10 @@ function convertCardsToValues(dealerHand, yourHand) {
 function evaluateInitialHands(dealerHandValues, yourHandValues){
   let yourSum = 0;
   let dealerSum = 0;
-  yourSum = yourHandValues.reduce((accumulator, value) => accumulator + value);
+  yourSum = yourHandValues.reduce((accumulator, value) => accumulator + value); // sum up the values in yourHandValues arrays and assign the result to "yourSum". reduces() method that reduces an array of values into a single value
   dealerSum = dealerHandValues.reduce((accumulator, value) => accumulator + value);
-  if(yourSum === 22){
-    yourSum =  12;
+  if(yourSum === 22){  //meaning 2 Aces - 11 points 2 times
+    yourSum =  12;     //1 Ace: 11 points - 2nd Ace: 1 points
   }
   if(dealerSum === 22){
     dealerSum = 12;
@@ -153,21 +152,50 @@ function evaluateInitialHands(dealerHandValues, yourHandValues){
 function checkValue(card) {
   let info = card.split("-"); //give composition of the card as an array e.g ["10","D"]
   let value = info[0];
-  if (isNaN(value)) {
+  if (isNaN(value)) {     //meaning it's a face card: A, J, Q, K
       if (value === "A") {
         return 11;
     } else {
       return 10;
     } 
   }
-  return parseInt(value);
+  return parseInt(value); // parseInt(), converts a string to a number and if the value is a number it returns a numeric value of the card.
 }
 
 
 // ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM , GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
 
-let hasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
-let isActive = true; // Player(you) is still active in the game
+let youhasBlackJack = false;
+let dealerhasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
+let youisActive = true;   // Player(you) is still active in the game
+let dealerisActive = true;
+
+if (yourCardSum === 21) {
+  welcomeMessage.textContent = "Blackjack,! You win!";
+  youhasBlackJack = true;
+  dealerhasBlackJack = false;
+  let youisActive = true;
+  let dealerisActive = false;
+  yourScore += 1;
+} else if (dealerCardSum === 21) {
+  welcomeMessage.textContent = "Dealer has Blackjack,! You lose!";
+  youhasBlackJack = false;
+  dealerhasBlackJack = true;
+  let youisActive = false;
+  let dealerisActive = true;
+  dealerScore += 1;
+} else if (sum <  21) {
+  welcomeMessage.textContent = "Do you want to hit a card or stand?";
+  youhasBlackJack = false;
+  dealerhasBlackJack = false;
+  let youisActive = true;
+  let dealerisActive = true;
+}
+
+
+
+
+//let isActive = true; // Player(you) is still active in the game
 
 
 //if (sum <  21) {
