@@ -8,62 +8,61 @@ let yourWins = 0;
 // Keeping track of the number of Ace to see if stay < 21
 let dealerAceCount = 0;
 let yourAceCount = 0; 
-
 // keep track of the hidden cards of the dealer
 let hiddenCard;
 let deck;  
-
 // Allows you to hit when yourSum < 21
-let actionHit = true
+let yourCards = document.getElementById("your-cards");
+let dealerCards = document.getElementById("dealer-cards");
 
-let yourHand = document.querySelector("#your-cards");
+let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
+let yourCardScoreDiv = document.querySelector("#yourCardSum");
+let startBtn = document.querySelector('.start-btn');
+let welcomeMessage = document.getElementById('global-message');
+let dealerHand = [];
+let yourHand = [];
+let yourWinsDisplay = document.getElementById("your-wins");
+let dealerWinsDisplay = document.getElementById("dealer-wins");
+let hitButton = document.getElementById("hit-button");
+let standButton = document.getElementById("stand-button");
+let youhasBlackJack = false;
+let dealerhasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
+let youAreActive = true;   // Player(you) is still active in the game
+let dealerIsActive = true;
 
 // ** START THE GAME ** //
 
-const welcomeMessage = document.getElementById('global-message');
-
-//Buttons & Actions
-// to start we need some card to distribute => create the deck
-// Call a function when the window onload
-
-window.onload = function startGame() {
-  let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
-  let yourCardScoreDiv = document.querySelector("#yourCardSum");
-  let startBtn = document.querySelector('.start-btn');
-  let welcomeMessage = document.getElementById('global-message');
-  let dealerHand = [];
-  let yourHand = [];
-
+function startGame() {
   deck = createDeck(); // we have the cards with the function ("createDeck()"). we add "deck =" to save the card in the deck variable to use them during the game
   deck = shuffleDeck(deck); // use the variable deck corresponding to shuffled cards generate by the function "shuffleDeck()"
-
-  startBtn.addEventListener('click', () => {
-    let yourCards = document.getElementById("your-cards");
-    let dealerCards = document.getElementById("dealer-cards");
-    yourCards.innerHTML = "";
-    dealerCards.innerHTML = "";
-    welcomeMessage.textContent = "Let's get started!";
-    [dealerHand, yourHand] = dealHands(deck);
-    [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
-    [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
-    yourCardScoreDiv.textContent = yourCardSum;
-    //dealerCardScoreDiv.textContent = dealerCardSum;  // comment out so we don't see the dealerCardSore before the player stands
-    gameStatus()
-
-
-    // Check for Blackjack
-    // Your turn
-        // Hit 
-          // evaluate the score (Blackjack or bust?)
-        // or Stand
-    // Dealer Turn
-        // Check the score, then choose Hit / Stand (based on score
-          // If Hit, 
-            // evaluate the score (Blackjack or bust?)
-    // If the Dealer stands
-      // Final evaluation (compare scores)
-  });
+  yourHand = [];
+  dealerHand = [];
+  yourCards.innerHTML = "";
+  dealerCards.innerHTML = "";
+  welcomeMessage.textContent = "Let's get started!";
+  deal();
+  checkInitialHandResults();
 }
+
+function deal() {
+  [dealerHand, yourHand] = dealHands(deck);
+  [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
+  [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
+  yourCardScoreDiv.textContent = yourCardSum;
+}
+
+
+// Check for Blackjack
+// Your turn
+    // Hit
+      // evaluate the score (Blackjack or bust?)
+    // or Stand
+// Dealer Turn
+    // Check the score, then choose Hit / Stand (based on score
+      // If Hit,
+        // evaluate the score (Blackjack or bust?)
+// If the Dealer stands
+  // Final evaluation (compare scores)
 
 
 function createDeck() {
@@ -78,13 +77,9 @@ function createDeck() {
           deck.push(values[j] + "-" + suits[i]); 
       }
   }
-   //console.log(deck)
   return deck;
 }
 
-
-//We have the deck and now we need to shuffle a function + randomly select the cards.
-// Definition of the function suffleDeck (also add the variable at the top when the window load)
 function shuffleDeck(deck) {
   shuffledDeck = [];
   for (let i = 1; i > shuffledDeck.length && i < 53; i++) { // for loop to go through all the sheffledDeck. We iterate from 1 and as long as i >53 to put all the card in the stored shuffeled deck
@@ -170,6 +165,7 @@ function checkValue(card) {
     } 
   }
   return parseInt(value); // parseInt(), converts a string to a number and if the value is a number it returns a numeric value of the card.
+  checkInitialHandResults() 
 }
 
 function checkAce(card) {
@@ -189,56 +185,43 @@ function aceReduction(cardSum, aceCount) {
 
 // ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM , GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
 
-let youhasBlackJack = false;
-let dealerhasBlackJack = false; // variable to track the state of the game for the players, see if the player cash out, still active in the game (not bust)
-let youisActive = true;   // Player(you) is still active in the game
-let dealerisActive = true;
-
-function gameStatus() {
+function checkInitialHandResults() {
   if (yourCardSum === 21) {
-    welcomeMessage.textContent = "Blackjack,! You win!";
+    welcomeMessage.textContent = "Blackjack! You win!";
     disableHitButton();
     disableStandButton();
     youhasBlackJack = true;
     dealerhasBlackJack = false;
-    youisActive = true;
-    dealerisActive = false;
-    youWins += 1;
-    
+    youAreActive = true;
+    dealerIsActive = false;
+    yourWins += 1;
   } else if (dealerCardSum === 21) {
     welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
     disableHitButton();
     disableStandButton();
     youhasBlackJack = false;
     dealerhasBlackJack = true;
-    youisActive = false;
-    dealerisActive = true;
+    youAreActive = false;
+    dealerIsActive = true;
     dealerWins += 1;
-  } else if (yourCardSum <  21) {
+  }
+}
+
+
+function checkInitialHandResults() {
+  if (yourCardSum <  21) {
     welcomeMessage.textContent = "Do you want to hit a card or stand?";
     youhasBlackJack = false;
     dealerhasBlackJack = false;
-    youisActive = true;
-    dealerisActive = true;
+    youAreActive = true;
+    dealerIsActive = true;
   }
-
-  let yourWinsDisplay = document.getElementById("your-wins");   
-  let dealerWinsDisplay = document.getElementById("dealer-wins");
-
-  yourWinsDisplay.textContent = "Player Wins: " + yourWins;
-  dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
 }
 
 // Hit and Stand Buttons text's turn red when we click and color reset after 1000 milliseconds (= 1 second)
-let hitButton = document.getElementById("hit-button");
-hitButton.addEventListener("click", () => {
-  hitButton.style.color = "red";
-  setTimeout(function() {
-    hitButton.style.color = "initial";
-  }, 1000);
-  hit();
 
-  function hit() {
+function hit() {
+  if (youAreActive) {
     let yourCard = deck.pop();
     let yourCardImg = document.createElement('img');
     yourCardImg.src = "./cards/" + yourCard + ".png";
@@ -246,50 +229,57 @@ hitButton.addEventListener("click", () => {
     yourCardSum += checkValue(yourCard);
     yourAceCount += checkAce(yourCard);
     document.querySelector("#yourCardSum").textContent = yourCardSum;
-    gameStatus();
+    evaluateUserHandScore();
+    disableHitButton(); // disable the hit button after it is clicked
+    hitButton.style.color = "red";
+    setTimeout(function() {
+      hitButton.style.color = "initial";
+    }, 1000);
   }
-});
+}
 
 function disableHitButton() {
-  hitButton.style.backgroundColor = "grey";
-  hitButton.removeEventListener("click");
+  hitButton.onclick = "";
 }
 
 function disableStandButton() {
-  standButton.style.backgroundColor = "grey";
-  standButton.removeEventListener("click");
+  standButton.onclick = "";
 }
 
-let standButton = document.getElementById("stand-button");
-standButton.addEventListener("click", () => {
-  stand();
+function stand() {
   standButton.style.color = "red";
   setTimeout(function() {
     standButton.style.color = "initial";
   }, 1000);
-  
-  function stand() {
-    dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
-    [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
-    disableHitButton();
-    disableStandButton();
-    ////document.getElementById("XXXXXXXX") see the hidden card
-  }
+  dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
+  [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
+  disableHitButton();
+  disableStandButton();
+  dealerIsActive = true;
+}
 
+function evaluateUserHandScore() {
   if (yourCardSum > 21) { //check if You bust (here, yes!)
     welcomeMessage.textContent = "You bust! Dealer wins.";
-    youisActive = false;
-    dealerisActive = true;
+    youAreActive = false;
     dealerWins += 1;
-    gameStatus();
+    updateWinCounts();
+    disableHitButton();
+    disableStandButton();
+  } else if (yourCardSum === 21) {
+    welcomeMessage.textContent = "21! You win.";
+    youAreActive = false;
+    yourWins += 1;
+    updateWinCounts();
   }
+}
 
-});
+function updateWinCounts() {
+  yourWinsDisplay.textContent = "Player Wins: " + yourWins;
+  dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
 
-//** STAND **/
+  yourWinsDisplay.textContent = "Player Wins: " + yourWins;
+  dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
 
-
-
-
-
+}
 
