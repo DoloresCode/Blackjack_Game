@@ -7,7 +7,7 @@ let dealerWins = 0;
 let yourWins = 0;
 // Keeping track of the number of Ace to see if stay < 21
 let dealerAceCount = 0;
-let yourAcecount = 0; 
+let yourAceCount = 0; 
 
 // keep track of the hidden cards of the dealer
 let hiddenCard;
@@ -27,10 +27,6 @@ const welcomeMessage = document.getElementById('global-message');
 // Call a function when the window onload
 
 window.onload = function startGame() {
-  //let yourCards = document.getElementById("your-cards");
-  //let dealerCards = document.getElementById("dealer-cards");
-  //yourCards.innerHTML = "";
-  //dealerCards.innerHTML = "";
   let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
   let yourCardScoreDiv = document.querySelector("#yourCardSum");
   let startBtn = document.querySelector('.start-btn');
@@ -51,10 +47,10 @@ window.onload = function startGame() {
     [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
     [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
     yourCardScoreDiv.textContent = yourCardSum;
-    //dealerCardScoreDiv.textContent = dealerCardSum;
+    //dealerCardScoreDiv.textContent = dealerCardSum;  // comment out so we don't see the dealerCardSore before the player stands
     gameStatus()
 
-    
+
     // Check for Blackjack
     // Your turn
         // Hit 
@@ -176,6 +172,20 @@ function checkValue(card) {
   return parseInt(value); // parseInt(), converts a string to a number and if the value is a number it returns a numeric value of the card.
 }
 
+function checkAce(card) {
+  if(card[0] === "A") {
+    return 1;
+  }
+  return 0;
+}
+
+function aceReduction(cardSum, aceCount) {
+  while (cardSum > 21 && aceCount > 0) {
+    cardSum  -= 10; // change the 11 to 1 to be below 21 points
+    aceCount -= 1;
+  }
+  return [cardSum, aceCount];
+}
 
 // ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM , GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
 
@@ -185,59 +195,101 @@ let youisActive = true;   // Player(you) is still active in the game
 let dealerisActive = true;
 
 function gameStatus() {
-if (yourCardSum === 21) {
-  welcomeMessage.textContent = "Blackjack,! You win!";
-  youhasBlackJack = true;
-  dealerhasBlackJack = false;
-  youisActive = true;
-  dealerisActive = false;
-  youWins += 1;
+  if (yourCardSum === 21) {
+    welcomeMessage.textContent = "Blackjack,! You win!";
+    disableHitButton();
+    disableStandButton();
+    youhasBlackJack = true;
+    dealerhasBlackJack = false;
+    youisActive = true;
+    dealerisActive = false;
+    youWins += 1;
+    
+  } else if (dealerCardSum === 21) {
+    welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
+    disableHitButton();
+    disableStandButton();
+    youhasBlackJack = false;
+    dealerhasBlackJack = true;
+    youisActive = false;
+    dealerisActive = true;
+    dealerWins += 1;
+  } else if (yourCardSum <  21) {
+    welcomeMessage.textContent = "Do you want to hit a card or stand?";
+    youhasBlackJack = false;
+    dealerhasBlackJack = false;
+    youisActive = true;
+    dealerisActive = true;
+  }
+
+  let yourWinsDisplay = document.getElementById("your-wins");   
+  let dealerWinsDisplay = document.getElementById("dealer-wins");
+
+  yourWinsDisplay.textContent = "Player Wins: " + yourWins;
+  dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
+}
+
+// Hit and Stand Buttons text's turn red when we click and color reset after 1000 milliseconds (= 1 second)
+let hitButton = document.getElementById("hit-button");
+hitButton.addEventListener("click", () => {
+  hitButton.style.color = "red";
+  setTimeout(function() {
+    hitButton.style.color = "initial";
+  }, 1000);
+  hit();
+
+  function hit() {
+    let yourCard = deck.pop();
+    let yourCardImg = document.createElement('img');
+    yourCardImg.src = "./cards/" + yourCard + ".png";
+    yourCards = document.getElementById("your-cards").append(yourCardImg);
+    yourCardSum += checkValue(yourCard);
+    yourAceCount += checkAce(yourCard);
+    document.querySelector("#yourCardSum").textContent = yourCardSum;
+    gameStatus();
+  }
+});
+
+function disableHitButton() {
+  hitButton.style.backgroundColor = "grey";
+  hitButton.removeEventListener("click");
+}
+
+function disableStandButton() {
+  standButton.style.backgroundColor = "grey";
+  standButton.removeEventListener("click");
+}
+
+let standButton = document.getElementById("stand-button");
+standButton.addEventListener("click", () => {
+  stand();
+  standButton.style.color = "red";
+  setTimeout(function() {
+    standButton.style.color = "initial";
+  }, 1000);
   
-} else if (dealerCardSum === 21) {
-  welcomeMessage.textContent = "Dealer has Blackjack,! You lose!";
-  youhasBlackJack = false;
-  dealerhasBlackJack = true;
-  youisActive = false;
-  dealerisActive = true;
-  dealerWins += 1;
-} else if (yourCardSum <  21) {
-  welcomeMessage.textContent = "Do you want to hit a card or stand?";
-  youhasBlackJack = false;
-  dealerhasBlackJack = false;
-  youisActive = true;
-  dealerisActive = true;
-}
+  function stand() {
+    dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
+    [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
+    disableHitButton();
+    disableStandButton();
+    ////document.getElementById("XXXXXXXX") see the hidden card
+  }
 
-let yourWinsDisplay = document.getElementById("your-wins");   
-let dealerWinsDisplay = document.getElementById("dealer-wins");
+  if (yourCardSum > 21) { //check if You bust (here, yes!)
+    welcomeMessage.textContent = "You bust! Dealer wins.";
+    youisActive = false;
+    dealerisActive = true;
+    dealerWins += 1;
+    gameStatus();
+  }
 
-yourWinsDisplay.textContent = "Player Wins: " + yourWins;
-dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
+});
 
-}
+//** STAND **/
 
 
 
 
 
-//let isActive = true; // Player(you) is still active in the game
 
-
-//if (sum <  21) {
-  //welcomeMessage.textContent = "Do you want to hit a card or stand?"; // welcomeMessage.textContent = "Do you want to hit a card or stand?";
-//} else if (sum === 21) {
- // welcomeMessage.textContent = "Yeah, you have got a Blackjack"; // welcomeMessage.textContent = "Yeah, you have got a Blackjack";
-	//  hasBlackJack = true;
-//} else {
- // welcomeMessage.textContent = "You bust, sorry! You can still play again"; // welcomeMessage.textContent = "You bust, sorry! You can still play again";
-	  //let isActive = false;      
-//}
-
-// check the scores and update them
-//  dealerScore = document.querySelector("#dealer-scores")
-//  dealerScore.textContent = XXXXXX;
-//  yourScore = document.querySelector("#your-scores")
-//  yourScore.textContent = XXXXX;
-
-let hitButton = document.querySelector('input[value="Hit"]');
-let standButton = document.querySelector('input[value="Stand"]');
