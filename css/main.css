@@ -86,6 +86,14 @@ h3 {
   background-color:  rgb(233, 199, 8);
 }
 
+#hit-button:active {
+    background-color: rgba(46, 78, 195, 0.651);
+}
+
+#stand-button:active {
+    background-color: rgba(46, 78, 195, 0.651);
+}
+
 #dealer-wins {
     position: absolute;
     bottom: 0;

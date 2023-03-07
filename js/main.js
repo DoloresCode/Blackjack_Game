@@ -11,10 +11,9 @@ let yourAceCount = 0;
 // keep track of the hidden cards of the dealer
 let hiddenCard;
 let deck;  
-// Allows you to hit when yourSum < 21
+// Variables
 let yourCards = document.getElementById("your-cards");
 let dealerCards = document.getElementById("dealer-cards");
-
 let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
 let yourCardScoreDiv = document.querySelector("#yourCardSum");
 let startBtn = document.querySelector('.start-btn');
@@ -49,6 +48,7 @@ function deal() {
   [dealerHandValues, yourHandValues] = convertCardsToValues(dealerHand, yourHand);
   [dealerCardSum, yourCardSum] = evaluateInitialHands(dealerHandValues, yourHandValues);
   yourCardScoreDiv.textContent = yourCardSum;
+  hiddenCard = dealerHand[0]; // I assign the value of the dealer's hidden card
 }
 
 
@@ -105,8 +105,8 @@ function dealHands(deck) {
     let dealerCardImg = document.createElement('img'); 
     yourCardImg.src = "./cards/" + yourCard + ".png"; //set the source of the card image
     
-    let yourCards = document.getElementById("your-cards");
-    let dealerCards = document.getElementById("dealer-cards");
+    //let yourCards = document.getElementById("your-cards");
+    //let dealerCards = document.getElementById("dealer-cards");
     yourCards.append(yourCardImg); // append yourCardImg to yourCards element
     if (i === 0){
       dealerCardImg.src = "./cards/BACK.png";
@@ -231,9 +231,11 @@ function hit() {
     document.querySelector("#yourCardSum").textContent = yourCardSum;
     evaluateUserHandScore();
     disableHitButton(); // disable the hit button after it is clicked
-    hitButton.style.color = "red";
+    welcomeMessage.textContent = "You hit!";
+    hitButton.style.backgroundColor = "blue";
     setTimeout(function() {
-      hitButton.style.color = "initial";
+      hitButton.style.backgroundColor = "";
+      //enableHitButton();
     }, 1000);
   }
 }
@@ -246,16 +248,80 @@ function disableStandButton() {
   standButton.onclick = "";
 }
 
-function stand() {
-  standButton.style.color = "red";
+function enableHitButton() {
   setTimeout(function() {
-    standButton.style.color = "initial";
+    hitButton.disabled = false;
+    hitButton.style.backgroundColor = "";
+  }, 1000);
+}
+
+function enableStandButton() {
+  setTimeout(function() {
+    standButton.disabled = false;
+    standButton.style.backgroundColor = "";
+  }, 1000);
+}
+
+function stand() {
+  standButton.style.backgroundColor = "blue";
+  setTimeout(function() {
+    standButton.style.backgroundColor = "";
+      enableHitButton();
   }, 1000);
   dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
   [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
   disableHitButton();
   disableStandButton();
   dealerIsActive = true;
+  welcomeMessage.textContent = "You stand!";
+  evaluateUserHandScore();
+
+  // Show dealer's hidden card
+  let hiddenCardImg = dealerCards.children[0];
+  hiddenCardImg.src = "./cards/" + hiddenCard + ".png";
+  dealerCardScoreDiv.textContent = dealerCardSum;   //display dealer card sum
+
+  // evaluate dealer's hand and take actions
+  while (dealerIsActive) {
+    if (dealerCardSum < 17) {
+      let dealerCard = deck.pop();
+      let dealerCardImg = document.createElement('img');
+   
+      dealerCardImg.src = "./cards/" + dealerCard + ".png";
+      dealerCards.append(dealerCardImg);
+      dealerHand.push(dealerCard);
+      let dealerCardValue = checkValue(dealerCard);
+      dealerCardSum += dealerCardValue;
+      dealerAceCount += checkAce(dealerCard);
+      [dealerCardSum, dealerAceCount] = aceReduction(dealerCardSum, dealerAceCount);
+      dealerCardScoreDiv.textContent = dealerCardSum;
+      if (dealerCardSum > 21) {
+        welcomeMessage.textContent = "Dealer busts! You win!";
+        dealerIsActive = false;
+        yourWins += 1;
+        updateWinCounts();
+      }
+    } else if (dealerCardSum === 21) {
+      welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
+      dealerIsActive = false;
+      dealerWins += 1;
+      updateWinCounts();
+    } else if (dealerCardSum > yourCardSum) {
+      welcomeMessage.textContent = "Dealer wins!";
+      dealerIsActive = false;
+      dealerWins += 1;
+      updateWinCounts();
+    } else if (dealerCardSum === yourCardSum) {
+      welcomeMessage.textContent = "It's a tie!";
+      dealerIsActive = false;
+      updateWinCounts();
+    } else {
+      welcomeMessage.textContent = "You win!";
+      dealerIsActive = false;
+      yourWins += 1;
+      updateWinCounts();
+    }
+  }
 }
 
 function evaluateUserHandScore() {
