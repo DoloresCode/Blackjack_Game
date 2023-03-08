@@ -49,7 +49,10 @@ h1 {
 
 h3 {
     background-color: rgb(255, 0, 60);
+    padding: .35em;
+    color: white;
     border-radius: 20%;
+    margin: 1em auto;
 }
 
 #dealer-cards img {
@@ -87,7 +90,7 @@ h3 {
 }
 
 #hit-button:active {
-    background-color: rgba(46, 78, 195, 0.651);
+    background-color: "rgba(46, 78, 195, 0.651)";
 }
 
 #stand-button:active {
@@ -128,4 +131,8 @@ h3 {
     color: white;
     font-size: large;
     font-weight: bold;
+}
+
+.start-btn:active {
+    background-color: rgba(46, 78, 195, 0.651);
 }

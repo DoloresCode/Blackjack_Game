@@ -5,13 +5,11 @@ let yourCardSum = 0;
 // Wins
 let dealerWins = 0;
 let yourWins = 0;
-// Keeping track of the number of Ace to see if stay < 21
-let dealerAceCount = 0;
-let yourAceCount = 0; 
 // keep track of the hidden cards of the dealer
 let hiddenCard;
 let deck;  
 // Variables
+let startButtonDisabled = false;
 let yourCards = document.getElementById("your-cards");
 let dealerCards = document.getElementById("dealer-cards");
 let dealerCardScoreDiv = document.querySelector("#dealerCardSum"); // See the sum of the Dealer's cards 1/2
@@ -42,6 +40,8 @@ function startGame() {
   dealerCards.innerHTML = "";
   welcomeMessage.textContent = "Let's get started!";
   deal();
+  enableHitButton();
+  enableStandButton();
   checkInitialHandResults();
 }
 
@@ -54,20 +54,6 @@ function deal() {
   keepScore = true;
   //dealerTakeAction();
 }
-
-
-// Check for Blackjack
-// Your turn
-    // Hit
-      // evaluate the score (Blackjack or bust?)
-    // or Stand
-// Dealer Turn
-    // Check the score, then choose Hit / Stand (based on score
-      // If Hit,
-        // evaluate the score (Blackjack or bust?)
-// If the Dealer stands
-  // Final evaluation (compare scores)
-
 
 function createDeck() {
   let suits = ['S','H','D','C'];
@@ -128,14 +114,12 @@ function convertCardsToValues(dealerHand, yourHand) {
   let dealerHandValues = [];
   let yourHandValues = [];  
   dealerCardSum = 0;
-  dealerAceCount = 0;
   //for (let i = 0; i < dealerHand.length; i++) {
   //  dealerHandValues.push(checkValue(dealerHand[i]));
   //}
   dealerHand.forEach((card) => { // equivalent to above loop; just another syntax
     dealerHandValues.push(checkValue(card));
   });
-  console.log(dealerHandValues);
   yourHand.forEach((card) => { // equivalent to above loop; just another syntax
     yourHandValues.push(checkValue(card))
   });
@@ -145,14 +129,9 @@ function convertCardsToValues(dealerHand, yourHand) {
 function evaluateInitialHands(dealerHandValues, yourHandValues){
   let yourSum = 0;
   let dealerSum = 0;
-  yourSum = yourHandValues.reduce((accumulator, value) => accumulator + value); // sum up the values in yourHandValues arrays and assign the result to "yourSum". reduces() method that reduces an array of values into a single value
-  dealerSum = dealerHandValues.reduce((accumulator, value) => accumulator + value);
-  if(yourSum === 22){  //meaning 2 Aces - 11 points 2 times
-    yourSum =  12;     //1 Ace: 11 points - 2nd Ace: 1 points
-  }
-  if(dealerSum === 22){
-    dealerSum = 12;
-  }
+  yourSum = redefineHandScore(yourHandValues); // sum up the values in yourHandValues arrays and assign the result to "yourSum". reduces() method that reduces an array of values into a single value
+  dealerSum = redefineHandScore(dealerHandValues);
+
   return [dealerSum, yourSum];
 }
 
@@ -172,19 +151,17 @@ function checkValue(card) {
   checkInitialHandResults() 
 }
 
-function checkAce(card) {
-  if(card[0] === "A") {
-    return 1;
+function redefineHandScore(handValues){
+  let handScore = handValues.reduce((accumulator, value) => accumulator + value)
+  if ( handScore > 21) {
+      let firstAceIndex = handValues.indexOf(11) // returns 0
+      if (firstAceIndex > -1){ // if there is an 11 in the index ...
+          handValues[firstAceIndex] = 1
+          redefineHandScore(handValues)
+      }
   }
-  return 0;
-}
-
-function aceReduction(cardSum, aceCount) {
-  while (cardSum > 21 && aceCount > 0) {
-    cardSum  -= 10; // change the 11 to 1 to be below 21 points
-    aceCount -= 1;
-  }
-  return [cardSum, aceCount];
+  
+  return handScore
 }
 
 // ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM , GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
@@ -199,9 +176,12 @@ function checkInitialHandResults() {
     youAreActive = false;
     dealerIsActive = false;
     yourWins += 1;
-    restartGame();
   } else if (dealerCardSum === 21) {
     welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
+    let hiddenCardImg = dealerCards.children[0];
+    hiddenCardImg.src = "./cards/" + hiddenCard + ".png";
+    dealerCardScoreDiv.textContent = dealerCardSum;
+    dealerCardScoreDiv.textContent = 21;
     disableHitButton();
     disableStandButton();
     youhasBlackJack = false;
@@ -209,19 +189,23 @@ function checkInitialHandResults() {
     youAreActive = false;
     dealerIsActive = false;
     dealerWins += 1;
-    restartGame();
-  }
-}
-
-
-function checkInitialHandResults() {
-  if (yourCardSum <  21) {
+  } else if (yourCardSum < 21) {
     welcomeMessage.textContent = "Do you want to hit a card or stand?";
     youhasBlackJack = false;
     dealerhasBlackJack = false;
     youAreActive = true;
     dealerIsActive = true;
   }
+  
+  yourCardSum = redefineHandScore(yourHandValues); 
+  dealerCardSum = redefineHandScore(dealerHandValues); 
+
+  // Update the score divs
+  yourCardScoreDiv.textContent = yourCardSum;
+  dealerCardScoreDiv.textContent = "?";
+
+  evaluateUserHandScore(); //evaluate the players'score
+  updateWinCounts(); 
 }
 
 // Hit and Stand Buttons text's turn red when we click and color reset after 1000 milliseconds (= 1 second)
@@ -231,24 +215,12 @@ function hit() {
     let yourCard = deck.pop();
     let yourCardImg = document.createElement('img');
     yourCardImg.src = "./cards/" + yourCard + ".png";
-    yourCards = document.getElementById("your-cards").append(yourCardImg);
-    yourCardSum += checkValue(yourCard);
-    yourAceCount += checkAce(yourCard);
-    [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount); // to reduce the Ace value if needed
-    document.querySelector("#yourCardSum").textContent = yourCardSum;
+    yourHand.push(yourCard);
+    yourCards.append(yourCardImg);
+    [_, yourHandValues] = convertCardsToValues([], yourHand);  
+    yourCardSum = redefineHandScore(yourHandValues);
+    yourCardScoreDiv.textContent = yourCardSum;
     evaluateUserHandScore();
-    //disableHitButton(); // disable the hit button after it is clicked
-    welcomeMessage.textContent = "You hit!";
-    hitButton.style.backgroundColor = "blue";
-    setTimeout(function() {
-      hitButton.style.backgroundColor = "";
-      evaluateUserHandScore();
-    //  enableHitButton();
-    }, 1000);
-  } else {
-    evaluateUserHandScore();
-    updateWinCounts();
-    // add checkEndOfGame()
   }
 }
 
@@ -261,63 +233,64 @@ function disableStandButton() {
 }
 
 function enableHitButton() {
-  setTimeout(function() {
-    hitButton.disabled = false;
-    hitButton.style.backgroundColor = "";
-  }, 1000);
+  hitButton.onclick = hit;
 }
 
 function enableStandButton() {
-  setTimeout(function() {
-    standButton.disabled = false;
-    standButton.style.backgroundColor = "";
-  }, 1000);
+  standButton.onclick = stand;
 }
 
 function stand() {
-  standButton.style.backgroundColor = "blue";
-  setTimeout(function() {
-    standButton.style.backgroundColor = "";
-      evaluateUserHandScore();
-      enableHitButton();
-  }, 1000);
-  //dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
-  [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
+  yourCardSum = redefineHandScore(yourHandValues); // reduce the value of ace if the sum is over 21
+  dealerCardSum = redefineHandScore(dealerHandValues);
+  canHit = false; // so the player(you can't hit at that moment)
   disableHitButton();
   disableStandButton();
   dealerIsActive = true;
-  welcomeMessage.textContent = "You stand!";
   evaluateUserHandScore();
 
-  // Show dealer's hidden card
+  // Show dealer's hidden card - Flip the card face up
   let hiddenCardImg = dealerCards.children[0];
   hiddenCardImg.src = "./cards/" + hiddenCard + ".png";
   dealerCardScoreDiv.textContent = dealerCardSum;   //display dealer card sum
 
-  // evaluate dealer's hand and take actions
-function dealerTakeAction() {
-  while (dealerIsActive) {
-    if (dealerCardSum < 17) {
-      welcomeMessage.textContent = "Dealer must deal a card!"; ///////****to make work */
-      let dealerCard = deck.pop();
-      let dealerCardImg = document.createElement('img');
-      dealerCardImg.src = "./cards/" + dealerCard + ".png";
-      dealerCards.append(dealerCardImg);
-      dealerHand.push(dealerCard);
-      let dealerCardValue = checkValue(dealerCard);
-      dealerCardSum += dealerCardValue;
-      dealerAceCount += checkAce(dealerCard);
-      [dealerCardSum, dealerAceCount] = aceReduction(dealerCardSum, dealerAceCount);
-      dealerCardScoreDiv.textContent = dealerCardSum;
-        evaluateUserHandScore();
-        updateWinCounts();
-      
-      }
-    }
-  }
+  // evaluate dealer's hand and take actions !!! NOT WORKING
+  dealerTakeAction();
 }
 
-function evaluateUserHandScore() {
+function dealerTakeAction() {
+  while (dealerIsActive && dealerCardSum < 17) {
+    welcomeMessage.textContent = "Dealer must deal a card!"; ///////****to make work */
+    let dealerCard = deck.pop();
+    let dealerCardImg = document.createElement('img');
+    dealerCardImg.src = "./cards/" + dealerCard + ".png";
+    dealerCards.append(dealerCardImg);
+    dealerHand.push(dealerCard);
+    [dealerHandValues, _] = convertCardsToValues(dealerHand, _);
+    dealerCardSum = redefineHandScore(dealerHandValues);
+    dealerCardScoreDiv.textContent = dealerCardSum;
+    updateWinCounts();
+  }
+
+  if (dealerCardSum > 21) {  
+    welcomeMessage.textContent = "Dealer busts, you win!";
+    yourWins += 1;
+  } else if (yourCardSum === dealerCardSum) {  
+    welcomeMessage.textContent = "It's a tie!";
+  } else if (yourCardSum > dealerCardSum) {   
+    welcomeMessage.textContent = "Congratulations! You win!";
+    yourWins += 1;
+  } else if (yourCardSum < dealerCardSum) {   
+    welcomeMessage.textContent = "You lose!";
+    dealerWins += 1;
+  }
+
+  updateWinCounts();
+}
+
+// ** WINNING CONDITIONS ** //
+
+function evaluateUserHandScore() {  
   if (yourCardSum > 21) { //check if You bust (here, yes!)
     welcomeMessage.textContent = "You bust! Dealer wins.";
     youAreActive = false;
@@ -326,16 +299,11 @@ function evaluateUserHandScore() {
     disableHitButton();
     disableStandButton();
   } else if (yourCardSum === 21) {
-    welcomeMessage.textContent = "21! You win.";
+    welcomeMessage.textContent = "21! Blackjack! You win.";
     youAreActive = false;
     yourWins += 1;
     updateWinCounts();
-  } else {
-    welcomeMessage.textContent = "Do you want to hit a card or stand?";
-  }
-  // reduce the value of ace if the sum is over 21
-  [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount); 
-  [dealerCardSum, dealerAceCount] = aceReduction(dealerCardSum, dealerAceCount); 
+  }  
 }
 
 function updateWinCounts() {
@@ -345,16 +313,19 @@ function updateWinCounts() {
 
 function restartGame() {
   keepScore = true;
-  welcomeMessage.textContent = "Restarting game in 2 seconds...";
+  welcomeMessage.textContent = "Restarting game in 5 seconds...";
   setTimeout(function() {
     startGame();
     welcomeMessage.textContent = "Welcome to the game!";
-  }, 2000);
+  }, 5000);
 }
 
 
-//function resetGame() {
-//  keepScore = false;
-//  welcomeMessage.textContent = "The Game will reset in 2 seconds...";
-//  setTimeout(resetGame, 2000);
-//}
+function enableStartButton() {
+  startButtonDisabled = false;
+  startButton.style.backgroundColor = "blue";
+  setTimeout(function() {
+   startButton.style.backgroundColor = "";
+    startButton.onclick = startGame;
+    }, 1000);
+}
