@@ -28,6 +28,7 @@ let youAreActive = true;   // Player(you) is still active in the game
 let dealerIsActive = true;
 let keepScore = false;
 let canHit = true;
+let resetBtn = document.getElementById("reset-btn");
 
 // ** START THE GAME ** //
 
@@ -327,4 +328,35 @@ function enableStartButton() {
    startButton.style.backgroundColor = "";
     startButton.onclick = startGame;
     }, 1000);
+}
+
+function reset() {
+  resetBtn.addEventListener("click", () => {
+    youAreActive = true;
+    dealerIsactive = true;
+    deck = createDeck();
+    deck = shuffleDeck;
+    dealerCardSum = 0;
+    yourCardSum = 0;
+    yourWins = 0;
+    dealersWins = 0;
+    youhasBlackJack = false;
+    dealerhasBlackJack = false;
+
+    // remove the cards displayed
+    let yourCards = document.getElementById("your-cards");
+    let dealerCards = document.getElementById("dealer-cards");
+    yourCards.innerHTML = "";
+    dealerCards.innerHTML = "";
+  
+    // Reset score displayed on screen
+    let dealerCardScoreDiv = document.querySelector("#dealerCardSum");
+    let yourCardScoreDiv = document.querySelector("#yourCardSum");
+    dealerCardScoreDiv.textContent = "";
+    yourCardScoreDiv.textContent = "";
+
+    // Reset message displayed on screen
+    let welcomeMessage = document.getElementById("global-message");
+    welcomeMessage.textContent = "Let's get started!";
+  });
 }

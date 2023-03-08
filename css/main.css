@@ -42,16 +42,18 @@ h1 {
 }
 
 #global-message {
+    background-color: rgb(255, 0, 60);
     display: flex;
     justify-content: center;
     margin-bottom: 5px;
+    border-radius: 20%;
 }
 
 h3 {
     background-color: rgb(255, 0, 60);
     padding: .35em;
     color: white;
-    border-radius: 20%;
+    border-radius: 5%;
     margin: 1em auto;
 }
 
@@ -122,7 +124,7 @@ h3 {
 .start-btn {
     position: absolute;
     left: 5%;
-    top: 25%;
+    top: 30%;
     text-align: center;
     padding: 16px;
     margin-bottom: 16px;
