@@ -99,7 +99,7 @@ h3 {
 
 #dealer-wins {
     position: absolute;
-    bottom: 0;
+    bottom: 30%;
     left: 5%;
     text-align: center;
     padding: 16px;
@@ -110,7 +110,7 @@ h3 {
 
 #your-wins {
     position: absolute;
-    bottom: 0;
+    bottom: 30%;
     left: 20%;
     text-align: center;
     padding: 16px;
@@ -122,7 +122,7 @@ h3 {
 .start-btn {
     position: absolute;
     left: 5%;
-    bottom: 2;
+    top: 25%;
     text-align: center;
     padding: 16px;
     margin-bottom: 16px;
@@ -131,8 +131,24 @@ h3 {
     color: white;
     font-size: large;
     font-weight: bold;
+    z-index: 1;
 }
 
 .start-btn:active {
     background-color: rgba(46, 78, 195, 0.651);
+}
+
+#reset-btn {
+    position: absolute;
+    left: 5%;
+    top: 15%;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 5%;
+    background-color:rgb(9, 45, 123);
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    z-index: 1; /*bring the element to the front or adjust the height of the parent container*/
 }

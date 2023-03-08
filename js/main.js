@@ -176,19 +176,6 @@ function checkInitialHandResults() {
     youAreActive = false;
     dealerIsActive = false;
     yourWins += 1;
-  } else if (dealerCardSum === 21) {
-    welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
-    let hiddenCardImg = dealerCards.children[0];
-    hiddenCardImg.src = "./cards/" + hiddenCard + ".png";
-    dealerCardScoreDiv.textContent = dealerCardSum;
-    dealerCardScoreDiv.textContent = 21;
-    disableHitButton();
-    disableStandButton();
-    youhasBlackJack = false;
-    dealerhasBlackJack = true;
-    youAreActive = false;
-    dealerIsActive = false;
-    dealerWins += 1;
   } else if (yourCardSum < 21) {
     welcomeMessage.textContent = "Do you want to hit a card or stand?";
     youhasBlackJack = false;
@@ -275,8 +262,18 @@ function dealerTakeAction() {
   if (dealerCardSum > 21) {  
     welcomeMessage.textContent = "Dealer busts, you win!";
     yourWins += 1;
+  } else if (dealerCardSum === 21) {
+    welcomeMessage.textContent = "Dealer has Blackjack! You lose!";
+    let hiddenCardImg = dealerCards.children[0];
+    hiddenCardImg.src = "./cards/" + hiddenCard + ".png";
+    dealerCardScoreDiv.textContent = dealerCardSum;
+    dealerCardScoreDiv.textContent = 21;
+    youhasBlackJack = false;
+    dealerhasBlackJack = true;
+    youAreActive = false;
+    dealerWins += 1;
   } else if (yourCardSum === dealerCardSum) {  
-    welcomeMessage.textContent = "It's a tie!";
+    welcomeMessage.textContent = "It's a tie! No one wins or loses!";
   } else if (yourCardSum > dealerCardSum) {   
     welcomeMessage.textContent = "Congratulations! You win!";
     yourWins += 1;
@@ -303,6 +300,8 @@ function evaluateUserHandScore() {
     youAreActive = false;
     yourWins += 1;
     updateWinCounts();
+    disableHitButton();
+    disableStandButton();
   }  
 }
 
