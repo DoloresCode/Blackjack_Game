@@ -234,6 +234,7 @@ function hit() {
     yourCards = document.getElementById("your-cards").append(yourCardImg);
     yourCardSum += checkValue(yourCard);
     yourAceCount += checkAce(yourCard);
+    [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount); // to reduce the Ace value if needed
     document.querySelector("#yourCardSum").textContent = yourCardSum;
     evaluateUserHandScore();
     //disableHitButton(); // disable the hit button after it is clicked
@@ -280,7 +281,7 @@ function stand() {
       evaluateUserHandScore();
       enableHitButton();
   }, 1000);
-  dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
+  //dealerCardSum = aceReduction(dealerCardSum, dealerAceCount);
   [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount);
   disableHitButton();
   disableStandButton();
@@ -300,7 +301,6 @@ function dealerTakeAction() {
       welcomeMessage.textContent = "Dealer must deal a card!"; ///////****to make work */
       let dealerCard = deck.pop();
       let dealerCardImg = document.createElement('img');
-    
       dealerCardImg.src = "./cards/" + dealerCard + ".png";
       dealerCards.append(dealerCardImg);
       dealerHand.push(dealerCard);
@@ -333,6 +333,9 @@ function evaluateUserHandScore() {
   } else {
     welcomeMessage.textContent = "Do you want to hit a card or stand?";
   }
+  // reduce the value of ace if the sum is over 21
+  [yourCardSum, yourAceCount] = aceReduction(yourCardSum, yourAceCount); 
+  [dealerCardSum, dealerAceCount] = aceReduction(dealerCardSum, dealerAceCount); 
 }
 
 function updateWinCounts() {
