@@ -153,15 +153,6 @@ function redefineDealerHandScore(){
   }
 }
 
-//function evaluateInitialHands(dealerHandValues, yourHandValues){
-//  let yourSum = 0;
-//  let dealerSum = 0;
-//  yourSum = redefineHandScore(yourHandValues); // sum up the values in yourHandValues arrays and assign the result to "yourSum". reduces() method that reduces an array of values into a single value
-//  dealerSum = redefineHandScore(dealerHandValues);
-//
-//  return [dealerSum, yourSum];
-//}
-
 // ** DETERMINE THE STATUS OF THE PLAYERS & UPDATE THEM, GIVE THEM THE CHOICE TO ACT ACCORDINGLY ** //
 
 function checkInitialHandResults() { 
@@ -331,8 +322,6 @@ function reset() {
     dealerCards.innerHTML = "";
   
     // Reset Sum Players' Hands displayed on screen
-    let dealerCardScoreDiv = document.querySelector("#dealerCardSum");
-    let yourCardScoreDiv = document.querySelector("#yourCardSum");
     dealerCardScoreDiv.textContent = "";
     yourCardScoreDiv.textContent = "";
 
