@@ -41,4 +41,4 @@ Add coins for betting.
 
 ## Screenshot of The Game
 
-<img width="1340" alt="Blackjack_Game" src="https://user-images.githubusercontent.com/117631390/221378674-6464d04d-a618-4b45-b589-948b69c59c8b.png">
+<img width="1704" alt="Screenshot_Blackjack_2023-03-08 " src="https://user-images.githubusercontent.com/117631390/223882868-1a8264b2-ffc7-4277-b093-6a28f25ce7ba.png">
