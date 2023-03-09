@@ -47,7 +47,11 @@ function startGame() {
   enableHitButton();
   enableStandButton();
   deal();
+  yourWinsDisplay.textContent = "Player Wins: " + yourWins;
+  dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
 }
+
+startBtn.addEventListener("click", startGame);
 
 function deal() {
   dealHands(deck);
@@ -276,7 +280,7 @@ function evaluateUserHandScore() {
     disableHitButton();
     disableStandButton();
   } else if (yourCardSum === 21) {
-    welcomeMessage.textContent = "21! Blackjack! You win.";
+    welcomeMessage.textContent = "21! Blackjack! You win!";
     youAreActive = false;
     dealerIsActive = false;
     youhasBlackJack = true;
@@ -303,7 +307,6 @@ function enableStartButton() {
 }
 
 function reset() {
-  resetBtn.addEventListener("click", () => {
     youAreActive = true;
     dealerIsactive = true;
     deck = createDeck();
@@ -311,7 +314,7 @@ function reset() {
     dealerCardSum = 0;
     yourCardSum = 0;
     yourWins = 0;
-    dealersWins = 0;
+    dealerWins = 0;
     youhasBlackJack = false;
     dealerhasBlackJack = false;
 
@@ -332,5 +335,5 @@ function reset() {
     // Reset message displayed on screen
     let welcomeMessage = document.getElementById("global-message");
     welcomeMessage.textContent = "Let's get started!";
-  });
 }
+resetBtn.addEventListener("click", reset)
