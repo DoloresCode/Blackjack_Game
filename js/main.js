@@ -183,8 +183,6 @@ function checkInitialHandResults() {
   updateWinCounts(); 
 }
 
-// Hit and Stand Buttons text's turn red when we click and color reset after 1000 milliseconds (= 1 second)
-
 function hit() {
     let yourCard = deck.pop();
     let yourCardImg = document.createElement('img');
@@ -266,7 +264,7 @@ function dealerTakeAction() {
   updateWinCounts();
 }
 
-// ** WINNING CONDITIONS ** //
+// ** SOME WINNING CONDITIONS ** //
 
 function evaluateUserHandScore() {  
   if (yourCardSum > 21) { //check if You bust (here, yes!)
@@ -295,15 +293,6 @@ function evaluateUserHandScore() {
 function updateWinCounts() {
   yourWinsDisplay.textContent = "Player Wins: " + yourWins;
   dealerWinsDisplay.textContent = "Dealer Wins: " + dealerWins;
-}
-
-function enableStartButton() {
-  startButtonDisabled = false;
-  startButton.style.backgroundColor = "blue";
-  setTimeout(function() {
-   startButton.style.backgroundColor = "";
-    startButton.onclick = startGame;
-    }, 1000);
 }
 
 function reset() {
