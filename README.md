@@ -35,8 +35,8 @@ e. If the players hand is egal to 21, they have a Blackjack! One point is awarde
 HTML, CSS, JavaScript
 
 
-## Next Features Coming soon
-Add coins for betting.
+## Next Features To be Considered In The Future
+Add casino chips for betting, more players and make the game responsive on mobile.
 
 
 ## Screenshot of The Game
