@@ -297,7 +297,7 @@ function updateWinCounts() {
 
 function reset() {
     youAreActive = true;
-    dealerIsactive = true;
+    dealerIsActive = true;
     deck = createDeck();
     deck = shuffleDeck;
     dealerCardSum = 0;
