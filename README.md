@@ -2,6 +2,10 @@
 
 In the well-known card game of blackjack, the goal is to get as near to a hand value of 21 as you can without going over. It's played between the player (You) and the dealer. After receiving their initial two cards, each player has the option to "hit" to draw more cards or "stand" to maintain their existing hand. Face cards are worth 10, whereas aces have a value of either 1 or 11. All other cards are worth their respective face values. The dealer must adhere to a certain set of guidelines while choosing to hit or stand (the dealer must continue to hit automatically if their hand sum is less than 17 points). When a player's hand totals more than 21, they instantly lose (they bust). If a player's hand totals more than the dealer's and is closer to 21, they win. When a player busts or the dealer's hand is close to 21, the dealer wins. If the sum of a player's hand is 21 points, they win, it's a Blackjack! It can happen that the dealer's hand sum is equal to the player's (you) hand sum, in that case it is a tie. No one wins.
 
+## Access The Game To Play
+
+Play HERE: https://dolorescode.github.io/Blackjack_Game/
+
 ## User Experience: Getting Started
 
 1.	Start of the game: 
